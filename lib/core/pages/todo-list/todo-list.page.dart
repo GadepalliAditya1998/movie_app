@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/core/pages/todo-list/todo-list.state.dart';
 import 'package:provider/provider.dart';
 
+/// The UI page of the Todo List page.
 class TodoListPage extends StatelessWidget {
   final TodoListState _todoListState = TodoListState();
 
