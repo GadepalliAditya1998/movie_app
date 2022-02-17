@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:movie_app/core/network/http.service.dart';
 
 class Injector {
   void configureDependencies() {
@@ -8,7 +9,9 @@ class Injector {
 
   void _configureSingletonServices() {}
 
-  void _configureFactoryServices() {}
+  void _configureFactoryServices() {
+    injector.registerFactory<HttpService>(() => HttpService());
+  }
 
   static GetIt get injector => GetIt.instance;
 
