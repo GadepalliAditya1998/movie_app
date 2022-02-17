@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/injector/injector.dart';
 
@@ -5,23 +7,19 @@ import 'app.dart';
 import 'core/exceptions/exception_handler.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  _configureDependencies();
-  _configureGlobalExceptionHandler();
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+    // This will throw the error on to the console
+    FlutterError.onError = (err) => FlutterError.presentError(err);
+
+    _configureDependencies();
+    runApp(const MyApp());
+  }, AppExceptionHandler.onException);
 }
 
+// This configures all the application dependencies
+// Dependency injection for the application, delegated to a different file.
 void _configureDependencies() {
   Injector().configureDependencies();
-}
-
-void _configureGlobalExceptionHandler() {
-  FlutterError.onError = (err) {
-    // This will throw the error on to the console
-    FlutterError.presentError(err);
-
-    // This will handle all the exceptions in global level, if left uncaught
-    AppExceptionHandler.onException(err);
-  };
 }
