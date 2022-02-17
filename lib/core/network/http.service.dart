@@ -7,6 +7,15 @@ class HttpService {
 
   HttpService() {
     this.dio = Dio(this._options);
+    this.dio.interceptors.add(QueuedInterceptorsWrapper(
+      onResponse: (response, handler) {
+        if (response.data is List) {
+          response.data = List.from(response.data).map((e) => Map.from(e)).toList();
+        }
+
+        handler.next(response);
+      },
+    ));
   }
 
   Future<dynamic> get(String path, {Map<String, dynamic>? queryParams}) async {
@@ -15,7 +24,8 @@ class HttpService {
     }
 
     try {
-      return this.dio.get(path, queryParameters: queryParams);
+      var response = await this.dio.get(path, queryParameters: queryParams);
+      return response.data;
     } on DioError catch (e) {
       this._handleException(e);
     }
@@ -27,7 +37,8 @@ class HttpService {
     }
 
     try {
-      return this.dio.post(path, queryParameters: queryParams, data: body);
+      var response = await this.dio.post(path, queryParameters: queryParams, data: body);
+      return response.data;
     } on DioError catch (e) {
       this._handleException(e);
     }
@@ -39,7 +50,8 @@ class HttpService {
     }
 
     try {
-      return this.dio.put(path, queryParameters: queryParams, data: body);
+      var response = await this.dio.put(path, queryParameters: queryParams, data: body);
+      return response.data;
     } on DioError catch (e) {
       this._handleException(e);
     }
@@ -51,7 +63,8 @@ class HttpService {
     }
 
     try {
-      return this.dio.delete(path, queryParameters: queryParams);
+      var response = await this.dio.delete(path, queryParameters: queryParams);
+      return response.data;
     } on DioError catch (e) {
       this._handleException(e);
     }
@@ -75,8 +88,10 @@ class HttpService {
   }
 
   BaseOptions get _options => BaseOptions(
-        baseUrl: 'https://www.omdbapi.com/',
+        baseUrl: 'https://api-nodejs-todolist.herokuapp.com/',
         contentType: Headers.jsonContentType,
-        queryParameters: {'apikey': '45af497c'},
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWY1MDEwZDAwOGZkMjAwMTczMGFkYWIiLCJpYXQiOjE2NDUxMjQ1Mjd9.BVxC1nsgZBhxL0FOTXT-nkZilkXw2ue-YGM9FjSCA0A',
+        },
       );
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/core/injector/injector.dart';
+import 'package:movie_app/core/pages/todo-list/todo-list.page.dart';
+import 'package:movie_app/services/itask.service.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -10,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: TodoListPage(),
     );
   }
 }
@@ -26,6 +29,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+  late ITaskService taskService;
+
+  @override
+  void initState() {
+    super.initState();
+    this.taskService = Injector.get<ITaskService>();
+    this.taskService.getTasksList().then((value) {});
+  }
 
   void _incrementCounter() {
     setState(() {
